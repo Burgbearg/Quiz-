@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Game</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic styles for the quiz elements */
+        #progressBar {
+            width: 100%;
+            background: #e0e0e0;
+        }
+        #progressBar div {
+            height: 20px;
+            background: #76c7c0;
+        }
+    </style>
+</head>
+<body>
+    <h1>New Testament Quiz</h1>
+    <div id="timer">Time Left: <span id="time">60</span> seconds</div>
+    <div id="progressBar"><div style="width: 0%"></div></div>
+    <div id="quiz"></div>
+    <button id="submit">Submit</button>
+    <div id="feedback"></div>
+    
+    <script>
+        const questions = [
+            {question: 'Who is the first book of the New Testament?', options: ['Matthew', 'Mark', 'Luke', 'John'], answer: 0},
+            {question: 'Who baptized Jesus?', options: ['John the Baptist', 'Peter', 'James', 'Paul'], answer: 0},
+            // Add more questions here...
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 60;
+
+        function loadQuestion() {
+            const questionContainer = document.getElementById('quiz');
+            if (currentQuestionIndex < questions.length) {
+                const question = questions[currentQuestionIndex];
+                questionContainer.innerHTML = `<h2>${question.question}</h2>`;
+                question.options.forEach((option, index) => {
+                    questionContainer.innerHTML += `<button onclick="checkAnswer(${index})">${option}</button>`;
+                });
+                updateProgressBar();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function checkAnswer(selectedIndex) {
+            const question = questions[currentQuestionIndex];
+            if (selectedIndex === question.answer) {
+                score++;
+                document.getElementById('feedback').innerText = 'Correct!';
+            } else {
+                document.getElementById('feedback').innerText = 'Wrong!';
+            }
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.querySelector('#progressBar div');
+            progressBar.style.width = (currentQuestionIndex / questions.length * 100) + '%';
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz').innerHTML = `<h2>Your score: ${score} / ${questions.length}</h2>`;
+        }
+
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('time').innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                endQuiz();
+            }
+        }, 1000);
+
+        loadQuestion();
+    </script>
+</body>
+</html>
